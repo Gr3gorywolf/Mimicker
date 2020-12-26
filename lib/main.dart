@@ -5,22 +5,31 @@ import 'package:mimicker/ui/phone_app/phone_app.dart';
 import 'package:mimicker/ui/watch_app/watch_app.dart';
 import 'package:mimicker/utils/script_runner.dart';
 import 'package:wakelock/wakelock.dart';
-
 ScriptRunner runner = new ScriptRunner();
 BuildContext bldCtx;
 FlutterGoogleMessageApi msgApi = FlutterGoogleMessageApi();
 void main() {
   runApp(MyApp());
-  if (APP_TARGET == 'phone') {
-    runner.init();
-  }else{
-       Wakelock.enable();
-  }
-  msgApi.init();
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    if (APP_TARGET == 'phone') {
+      runner.init();
+    } else {
+      Wakelock.enable();
+    }
+    msgApi.init();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

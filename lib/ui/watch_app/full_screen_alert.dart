@@ -28,20 +28,23 @@ class FullScreenAlert extends StatelessWidget {
       ),
       body: Container(
         height: screenSize.height,
-        width: screenSize.height,
+        width: screenSize.width,
         child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  msg,
-                  style: TextStyle(fontSize: 10),
-                )
-              ],
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  Text(
+                    msg,
+                    style: TextStyle(fontSize: 10),
+                  )
+                ],
+              ),
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:android_intent/android_intent.dart';
 import "package:system_info/system_info.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:mimicker/main.dart';
 import 'package:mimicker/ui/debug_page/debug_page.dart';
 import 'package:starflut/starflut.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'helpers.dart';
 
 class ScriptRunner {
@@ -17,7 +18,7 @@ class ScriptRunner {
   String procArch = "";
   bool intialized = false;
   init() async {
-    if(this.intialized) return;
+    if (this.intialized) return;
     //var kernel = SysInfo.kernelBitness.abs().toString();
     var kernelArch = SysInfo.kernelArchitecture.toString();
     procArch = kernelArch.contains("64") ? "arm64-v8a" : "armeabi-v7a";
@@ -25,25 +26,27 @@ class ScriptRunner {
     core = await Starflut.getFactory();
     service = await this.core.initSimple("test", "123", 0, 0, []);
     if (isAndroid == true) {
-      await Starflut.copyFileFromAssets("python3.6.zip",
-          "flutter_assets/starfiles", null); //desRelatePath must be null
-      await Starflut.loadLibrary("libpython3.6m.so");
-      var dir = await Starflut.getNativeLibraryDir();
-      var libs = jsonDecode(
-          await rootBundle.loadString("starfiles/libraries.json"))['libs'];
+      await Starflut.copyFileFromAssets(
+          "python3.6.zip",
+          "flutter_assets/starfiles",
+          null);
+      await Starflut.copyFileFromAssets("mimicker.py",
+          "flutter_assets/starfiles", null);
+      await Starflut.copyFileFromAssets("py-libs.zip",
+          "flutter_assets/starfiles", null);
+      await Starflut.copyFileFromAssets("cacert.pem",
+          "flutter_assets/starfiles", null);
+      var libsFile = await rootBundle.loadString("starfiles/libraries.json");
+      var libs = jsonDecode(libsFile)['libs'];
       for (var lib in libs) {
-        await Starflut.copyFileFromAssets("$procArch/$lib", null, null);
+        var filePath = "$lib";
+        await Starflut.copyFileFromAssets(
+            filePath, "flutter_assets/starfiles/py-modules/$procArch", null);
       }
+      await Starflut.loadLibrary("libpython3.6m.so");
     }
     serviceGroup = await service["_ServiceGroup"];
     await serviceGroup.initRaw("python36", service);
-    await core.regMsgCallBackP(
-        (int serviceGroupID, int uMsg, Object wParam, Object lParam) async {
-      print("$serviceGroupID  $uMsg   $wParam   $lParam");
-      return null;
-    });
-    this.helperScript = await rootBundle.loadString("starfiles/helpers.py");
-    service.runScript("python", this.helperScript, "", "");
     this.intialized = true;
   }
 
@@ -73,6 +76,16 @@ class ScriptRunner {
         break;
       case 'WATCH_ALERT':
         Helpers.showWatchAlert(args[0], args[1]);
+        break;
+      case 'LAUNCH_URL':
+        launch(args[0]);
+        break;
+      case 'LAUNCH_INTENT':
+        AndroidIntent intent =
+            AndroidIntent(action: args[0], data: args[1], package: args[2],
+                //clear top flag
+                flags: [268435456]);
+        intent.launch();
         break;
     }
   }
