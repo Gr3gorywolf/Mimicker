@@ -7,7 +7,7 @@ import 'package:mimicker/models/alert_dialog_data.dart';
 import 'package:mimicker/models/api_message.dart';
 import 'package:mimicker/models/scripts_response.dart';
 import 'package:mimicker/ui/watch_app/full_screen_alert.dart';
-
+import 'package:mimicker/models/bridge_action.dart';
 import '../../main.dart';
 
 class WatchApp extends StatefulWidget {
@@ -44,12 +44,17 @@ class _WatchAppState extends State<WatchApp> {
       switch (msg.action) {
         case "SCRIPT_LIST":
           setState(() {
-            _scripts = (jsonDecode(msg.message) as List<dynamic>).cast<String>();
+            _scripts =
+                (jsonDecode(msg.message) as List<dynamic>).cast<String>();
           });
           break;
         case "DISPLAY_ALERT":
           var data = getAlertData(msg.message);
-          FullScreenAlert.show(_ctx, data.title, data.message);
+          BridgeAction action = null;
+          if (data.action != null) {
+            action = BridgeAction.fromDynamic(jsonDecode(data.action));
+          }
+          FullScreenAlert.show(_ctx, data.title, data.message,action);
           break;
       }
     };
