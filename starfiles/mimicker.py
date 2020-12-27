@@ -14,9 +14,9 @@ def init(ctxVars):
         _bridge = ctxVars['_bridge']
 
 
-def phoneAlert(title="", message="", action=None):
+def phoneAlert(title="", message="",image=None, action=None):
     if(hasBridge):
-        _bridge.message('PHONE_ALERT', title, message, action)
+        _bridge.message('PHONE_ALERT', title, message,image, action)
     else:
         # when is not executed in app
         print(">>>>>>>>>>>>")
@@ -26,9 +26,9 @@ def phoneAlert(title="", message="", action=None):
         print(">>>>>>>>>>>>")
 
 
-def watchAlert(title="", message="", action=None):
+def watchAlert(title="", message="",image=None, action=None):
     if(hasBridge):
-        _bridge.message('WATCH_ALERT', title, message, action)
+        _bridge.message('WATCH_ALERT', title, message,image, action)
     else:
         # when is not executed in app
         print(">>>>>>>>>>>>")
@@ -93,7 +93,6 @@ def buildAction(actionName, functionName, functionParams=[]):
         "function": functionName,
         "args": functionParams
     }
-
 
 def setCallback(functionName, params=[]):
     if(hasBridge):

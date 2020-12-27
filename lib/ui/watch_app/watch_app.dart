@@ -67,7 +67,7 @@ class _WatchAppState extends State<WatchApp> {
           if (data.action != null) {
             action = BridgeAction.fromDynamic(jsonDecode(data.action));
           }
-          FullScreenAlert.show(_ctx, data.title, data.message, action);
+          FullScreenAlert.show(_ctx, data.title, data.message,data.image, action);
           break;
       }
     };

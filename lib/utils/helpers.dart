@@ -6,8 +6,8 @@ import 'package:mimicker/utils/bridge_actions.dart';
 import 'package:mimicker/main.dart';
 
 class Helpers {
-  static showAlert(
-      BuildContext ctx, String title, String message, BridgeAction action) {
+  static showAlert(BuildContext ctx, String title, String message,
+      String imgUrl, BridgeAction action) {
     showDialog(
       context: ctx,
       builder: (BuildContext context) {
@@ -16,6 +16,21 @@ class Helpers {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                (imgUrl != null)
+                    ? Container(
+                        child: Center(
+                          child: Image.network(
+                            imgUrl,
+                            fit: BoxFit.cover,
+                            height: 120,
+                            width: 120,
+                          ),
+                        ),
+                        padding: EdgeInsets.all(5),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.all(0),
+                      ),
                 Text(message),
               ],
             ),

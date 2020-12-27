@@ -84,17 +84,17 @@ class ScriptRunner {
     switch (type) {
       case 'PHONE_ALERT':
         BridgeAction action = null;
-        if (args[2] != null) {
-          action = BridgeAction.fromDynamic(args[2]);
+        if (args[3] != null) {
+          action = BridgeAction.fromDynamic(args[3]);
         }
-        Helpers.showAlert(bldCtx, args[0], args[1], action);
+        Helpers.showAlert(bldCtx, args[0], args[1],args[2], action);
         break;
       case 'WATCH_ALERT':
         BridgeAction action = null;
-        if (args[2] != null) {
-          action = BridgeAction.fromDynamic(args[2]);
+        if (args[3] != null) {
+          action = BridgeAction.fromDynamic(args[3]);
         }
-        WatchActions.showWatchAlert(args[0], args[1], action);
+        WatchActions.showWatchAlert(args[0], args[1],args[2], action);
         break;
       case 'CALL_FUNC':
         instance.call(args[0], args[1]);
