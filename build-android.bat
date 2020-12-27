@@ -1,0 +1,1 @@
+flutter build apk --no-shrink --split-per-abi
