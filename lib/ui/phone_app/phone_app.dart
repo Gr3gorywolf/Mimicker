@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:mimicker/utils/bridge_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:mimicker/models/api_message.dart';
 import 'package:mimicker/models/scripts_response.dart';
@@ -7,6 +7,7 @@ import 'package:mimicker/repository/scripts_repository.dart';
 import 'package:mimicker/models/bridge_action.dart';
 import 'package:mimicker/utils/script_runner.dart';
 import 'package:mimicker/utils/helpers.dart';
+import 'package:mimicker/utils/watch_actions.dart';
 import '../../main.dart';
 
 class PhoneApp extends StatefulWidget {
@@ -44,20 +45,14 @@ class _PhoneAppState extends State<PhoneApp> {
           break;
         case "EXECUTE_BRIDGE_ACTION":
           var action = BridgeAction.fromDynamic(jsonDecode(msg.message));
-          Helpers.callBridgeAction(action);
+          BridgeActions.call(action);
           break;
         case "BROADCAST_SCRIPTS_LIST":
-          sendScriptsList();
+          WatchActions.sendScriptsList(_scripts);
           break;
       }
     };
     super.initState();
-  }
-
-  sendScriptsList() {
-    var scriptList = _scripts.map((e) => e.file).toList();
-    msgApi.sendMessage(jsonEncode(
-        ApiMessage(action: "SCRIPT_LIST", message: jsonEncode(scriptList))));
   }
 
   fetchScripts() async {
@@ -69,7 +64,7 @@ class _PhoneAppState extends State<PhoneApp> {
       setState(() {
         _scripts = result.scripts;
       });
-      sendScriptsList();
+      WatchActions.sendScriptsList(_scripts);
     } catch (ex) {
       print(ex);
     }

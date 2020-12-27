@@ -61,6 +61,27 @@ def launchIntent(action, data="", package=""):
         print(package)
         print(">>>>>>>>>>>>")
 
+def phoneActionsList(title,actions=[]):
+    if(hasBridge):
+        _bridge.message('SHOW_PHONE_ACTIONS_LIST', title,actions)
+    else:
+        # when is not executed in app
+        print(">>>>>>>>>>>>")
+        print('SHOW_PHONE_ACTIONS_LIST')
+        print(title)
+        print(actions)
+        print(">>>>>>>>>>>>")
+
+def watchActionsList(title,actions=[]):
+    if(hasBridge):
+        _bridge.message('SHOW_WATCH_ACTIONS_LIST', title,actions)
+    else:
+        # when is not executed in app
+        print(">>>>>>>>>>>>")
+        print('SHOW_WATCH_ACTIONS_LIST')
+        print(title)
+        print(actions)
+        print(">>>>>>>>>>>>")
 
 def buildAction(actionName, functionName, functionParams=[]):
     ctx_id = ""

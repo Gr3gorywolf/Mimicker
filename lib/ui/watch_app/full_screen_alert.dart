@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mimicker/main.dart';
 import 'package:mimicker/models/bridge_action.dart';
 import 'package:mimicker/models/api_message.dart';
+import 'package:mimicker/ui/widgets/watch_content.dart';
+import 'package:mimicker/utils/phone_actions.dart';
 
 class FullScreenAlert extends StatelessWidget {
   final String title;
@@ -25,14 +27,8 @@ class FullScreenAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
+    return WatchContent(
+        actions: [
           Container(
             margin: EdgeInsets.all(5),
             child: FloatingActionButton(
@@ -49,13 +45,7 @@ class FullScreenAlert extends StatelessWidget {
                     mini: true,
                     heroTag: null,
                     onPressed: () {
-                      var parsedAction = null;
-                      if (action != null) {
-                        parsedAction = jsonEncode(action.toJson());
-                      }
-                      msgApi.sendMessage(jsonEncode(ApiMessage(
-                          action: "EXECUTE_BRIDGE_ACTION",
-                          message: parsedAction)));
+                      PhoneActions.executeBridgeAction(action);
                       Navigator.of(context).pop();
                     },
                     child: Icon(Icons.navigate_next),
@@ -65,36 +55,25 @@ class FullScreenAlert extends StatelessWidget {
                   padding: EdgeInsets.all(0),
                 )
         ],
-      ),
-      body: Container(
-        height: screenSize.height,
-        width: screenSize.width,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(30, 50, 30, 25),
-            child: Column(
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 18),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Text(
-                          msg,
-                          style: TextStyle(fontSize: 12),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 18),
             ),
-          ),
-        ),
-      ),
-    );
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Text(
+                      msg,
+                      style: TextStyle(fontSize: 12),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mimicker/main.dart';
 import 'package:mimicker/ui/debug_page/debug_page.dart';
+import 'package:mimicker/utils/watch_actions.dart';
 import 'package:starflut/starflut.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mimicker/models/bridge_action.dart';
 import 'helpers.dart';
+import 'package:mimicker/ui/phone_app/phone_action_list.dart';
 
 class ScriptRunner {
   StarCoreFactory core;
@@ -62,6 +64,7 @@ class ScriptRunner {
       try {
         handleMessage(type, args, python);
       } catch (ex) {
+        print(ex);
         Navigator.of(bldCtx).push(MaterialPageRoute(
             builder: (ctx) =>
                 DebugPage("Error trying to handle the bridge message")));
@@ -91,10 +94,26 @@ class ScriptRunner {
         if (args[2] != null) {
           action = BridgeAction.fromDynamic(args[2]);
         }
-        Helpers.showWatchAlert(args[0], args[1], action);
+        WatchActions.showWatchAlert(args[0], args[1], action);
         break;
       case 'CALL_FUNC':
         instance.call(args[0], args[1]);
+        break;
+      case 'SHOW_PHONE_ACTIONS_LIST':
+        List<BridgeAction> actions = [];
+        print(args[1]);
+        for (var act in args[1]) {
+          actions.add(BridgeAction.fromDynamic(act));
+        }
+        PhoneActionList.show(bldCtx, args[0], actions);
+        break;
+      case 'SHOW_WATCH_ACTIONS_LIST':
+        List<BridgeAction> actions = [];
+        print(args[1]);
+        for (var act in args[1]) {
+          actions.add(BridgeAction.fromDynamic(act));
+        }
+        WatchActions.showActionsList(args[0], actions);
         break;
       case 'LAUNCH_URL':
         launch(args[0]);
