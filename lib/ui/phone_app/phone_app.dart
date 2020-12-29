@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:mimicker/stores/stores_manager.dart';
 import 'package:mimicker/utils/bridge_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:mimicker/models/api_message.dart';
@@ -76,6 +78,7 @@ class _PhoneAppState extends State<PhoneApp> {
   @override
   Widget build(BuildContext context) {
     bldCtx = context;
+    final _mainStore = StoresManager.useMainStore(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -89,18 +92,21 @@ class _PhoneAppState extends State<PhoneApp> {
                   await fetchScripts();
                   return false;
                 },
-                child: ListView.builder(
-                    itemCount: _scripts.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      var script = _scripts[index];
-                      return ListTile(
-                        onTap: () {
-                          runner.run(script.content);
-                        },
-                        leading: Icon(Icons.code),
-                        title: Text(script.file),
-                      );
-                    }),
+                child: LoadingOverlay(
+                  isLoading:  _mainStore.isLoading,
+                  child: ListView.builder(
+                      itemCount: _scripts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var script = _scripts[index];
+                        return ListTile(
+                          onTap: () {
+                            runner.run(script.content);
+                          },
+                          leading: Icon(Icons.code),
+                          title: Text(script.file),
+                        );
+                      }),
+                ),
               )) // This trailing comma makes auto-formatting nicer for build methods.
         );
   }

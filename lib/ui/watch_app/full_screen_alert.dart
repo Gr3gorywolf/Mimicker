@@ -36,67 +36,58 @@ class FullScreenAlert extends StatelessWidget {
       imgBytes = base64.decode(encodedImg);
     }
     return WatchContent(
-        actions: [
-          Container(
-            margin: EdgeInsets.all(5),
-            child: FloatingActionButton(
-              mini: true,
-              heroTag: null,
-              onPressed: () => {Navigator.of(context).pop()},
-              child: Icon(Icons.close),
-            ),
+      actions: [
+        Container(
+          margin: EdgeInsets.all(5),
+          child: FloatingActionButton(
+            mini: true,
+            heroTag: null,
+            onPressed: () => {Navigator.of(context).pop()},
+            child: Icon(Icons.close),
           ),
-          (action != null)
-              ? Container(
-                  margin: EdgeInsets.all(5),
-                  child: FloatingActionButton(
-                    mini: true,
-                    heroTag: null,
-                    onPressed: () {
-                      PhoneActions.executeBridgeAction(action);
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(Icons.navigate_next),
-                  ),
-                )
-              : Padding(
-                  padding: EdgeInsets.all(0),
-                )
-        ],
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 18),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    (imgBytes != null)
-                        ? Container(
-                            child: Center(
-                              child: Image.memory(
-                                imgBytes,
-                                fit: BoxFit.cover,
-                                height: 80,
-                                width: 80,
-                              ),
-                            ),
-                            padding: EdgeInsets.all(5),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.all(0),
-                          ),
-                    Text(
-                      msg,
-                      style: TextStyle(fontSize: 12),
-                    )
-                  ],
+        ),
+        (action != null)
+            ? Container(
+                margin: EdgeInsets.all(5),
+                child: FloatingActionButton(
+                  mini: true,
+                  heroTag: null,
+                  onPressed: () {
+                    PhoneActions.executeBridgeAction(action);
+                    Navigator.of(context).pop();
+                  },
+                  child: Icon(Icons.navigate_next),
                 ),
+              )
+            : Padding(
+                padding: EdgeInsets.all(0),
+              )
+      ],
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 18),
+      ),
+      children: [
+        (imgBytes != null)
+            ? Container(
+                child: Center(
+                  child: Image.memory(
+                    imgBytes,
+                    fit: BoxFit.cover,
+                    height: 80,
+                    width: 80,
+                  ),
+                ),
+                padding: EdgeInsets.all(5),
+              )
+            : Padding(
+                padding: EdgeInsets.all(0),
               ),
-            ),
-          ],
-        ));
+        Text(
+          msg,
+          style: TextStyle(fontSize: 12),
+        )
+      ],
+    );
   }
 }

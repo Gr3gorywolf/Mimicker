@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:android_intent/android_intent.dart';
+import 'package:flutter_store/flutter_store.dart';
+import 'package:mimicker/stores/stores_manager.dart';
 import "package:system_info/system_info.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -117,6 +119,12 @@ class ScriptRunner {
         break;
       case 'LAUNCH_URL':
         launch(args[0]);
+        break;
+      case 'PHONE_LOADING':
+        StoresManager.useMainStore(bldCtx).setLoading(args[0]);
+        break;
+      case 'WATCH_LOADING':
+        WatchActions.setLoading(args[0]);
         break;
       case 'LAUNCH_INTENT':
         AndroidIntent intent =

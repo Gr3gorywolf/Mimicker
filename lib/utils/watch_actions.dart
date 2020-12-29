@@ -16,14 +16,19 @@ class WatchActions {
     var parsedAction = null;
     var imgData = null;
     if (image != null) {
-      imgData = await ImageRepository().getImageBase64(image);
+      setLoading(true);
+      imgData = await ImageRepository().getImageBase64(image,scaleSize: 120);
+      setLoading(false);
     }
     if (action != null) {
       parsedAction = jsonEncode(action.toJson());
     }
-    var dialogData = jsonEncode(
-        AlertDialogData(message: message, title: title,image: imgData, action: parsedAction)
-            .toJson());
+    var dialogData = jsonEncode(AlertDialogData(
+            message: message,
+            title: title,
+            image: imgData,
+            action: parsedAction)
+        .toJson());
     var apiMessage = ApiMessage(action: "DISPLAY_ALERT", message: dialogData);
     msgApi.sendMessage(jsonEncode(apiMessage.toJson()));
   }
@@ -35,6 +40,11 @@ class WatchActions {
     var apiMessage =
         ApiMessage(action: "SHOW_ACTIONS_LIST", message: actionsData);
     msgApi.sendMessage(jsonEncode(apiMessage.toJson()));
+  }
+
+  static setLoading(bool loading) {
+    msgApi.sendMessage(jsonEncode(
+        ApiMessage(action: "SET_LOADING", message: loading.toString())));
   }
 
   static sendScriptsList(List<Scripts> scripts) {

@@ -1,18 +1,44 @@
-import json 
-import mimicker 
-import urllib3 
+import json
+import mimicker
+import urllib3
+import base64
 mimicker.init(locals())
-mimicker.printOnPhone("xd","xdd")
-url = "https://api.crackwatch.com/api/games?page=0&sort_by=crack_date&is_cracked=true"
+authToken = ""
+clientId = "24c5abef5660451a82fdb20f2b9a2686"
+clientSecret = "78ac703484894c089427f01e9a861787"
+# cert_reqs='REQUIRED', ca_certs=mimicker.MIMICKER_CERT_PATH
+http = urllib3.PoolManager()
 
-http = urllib3.PoolManager()#cert_reqs='REQUIRED', ca_certs=mimicker.MIMICKER_CERT_PATH)
-r = http.request('GET', url)
-content_body = json.loads(r.data)
-print(content_body)
-message = ""
-for game in content_body:
-    print(game)
-    message+="Titulo: "+ game.title + "\n"
-    message+="Estado: crackeado" + "\n"
-    message+="Crackeado el:" +game.crackDate +  "\n\n"
-mimicker.printOnPhone(message,"Lista de juegos crackeados")
+# helper functions
+
+
+def getEncodedBasicAuth():
+    basicAuth = clientId+":"+clientSecret
+    return base64.b64encode(basicAuth.encode('ascii')).decode("ascii")
+
+
+def getAuthHeader():
+    return {"Authorization": "Bearer "+authToken}
+
+
+def fetchData(url, method='GET', body=None):
+    r = http.request(method, url, body, getAuthHeader())
+    return json.loads(r.data)
+
+
+def authorize():
+    print(getEncodedBasicAuth())
+    http = urllib3.PoolManager()
+    r = http.urlopen("POST", "https://accounts.spotify.com/api/token",
+                     headers={"Authorization": "Basic "+getEncodedBasicAuth(),
+                              'Content-Type': "application/x-www-form-urlencoded"},
+                     body="grant_type=client_credentials&scope=playlist-read-private")
+    global authToken
+    print(r.data)
+    authToken = json.loads(r.data)['access_token']
+# end of helper functions
+
+
+authorize() 
+devices = fetchData("https://api.spotify.com/v1/me/playlists")
+print(devices)

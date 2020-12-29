@@ -17,48 +17,38 @@ class WatchActionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return WatchContent(
-      actions: [
-        Container(
-          margin: EdgeInsets.all(5),
-          child: FloatingActionButton(
-            mini: true,
-            heroTag: null,
-            onPressed: () => {Navigator.of(context).pop()},
-            child: Icon(Icons.close),
-          ),
-        )
-      ],
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 18),
-          ),
-          Expanded(
-                      child: SingleChildScrollView(
-              child: Column(
-                children: actions
-                    .map((action) => Padding(
-                          padding: const EdgeInsets.all(0.0),
-                          child: RaisedButton(
-                            color: Colors.blue,
-                            textColor: Colors.white,
-                            child: Text(action.name),
-                            onPressed: () {
-                              PhoneActions.executeBridgeAction(action);
-                            },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0)),
-                          ),
-                        ))
-                    .toList(),
-              ),
+        actions: [
+          Container(
+            margin: EdgeInsets.all(5),
+            child: FloatingActionButton(
+              mini: true,
+              heroTag: null,
+              onPressed: () => {Navigator.of(context).pop()},
+              child: Icon(Icons.close),
             ),
-          ),
+          )
         ],
-      ),
-    );
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 18),
+        ),
+          children: actions
+              .map((action) => Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: RaisedButton(
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      child: Text(action.name),
+                      onPressed: () {
+                        PhoneActions.executeBridgeAction(action);
+                        //Navigator.of(context).pop();
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0)),
+                    ),
+                  ))
+              .toList(),
+        );
   }
 }

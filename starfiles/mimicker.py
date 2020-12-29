@@ -14,9 +14,9 @@ def init(ctxVars):
         _bridge = ctxVars['_bridge']
 
 
-def phoneAlert(title="", message="",image=None, action=None):
+def phoneAlert(title="", message="", image=None, action=None):
     if(hasBridge):
-        _bridge.message('PHONE_ALERT', title, message,image, action)
+        _bridge.message('PHONE_ALERT', title, message, image, action)
     else:
         # when is not executed in app
         print(">>>>>>>>>>>>")
@@ -26,9 +26,9 @@ def phoneAlert(title="", message="",image=None, action=None):
         print(">>>>>>>>>>>>")
 
 
-def watchAlert(title="", message="",image=None, action=None):
+def watchAlert(title="", message="", image=None, action=None):
     if(hasBridge):
-        _bridge.message('WATCH_ALERT', title, message,image, action)
+        _bridge.message('WATCH_ALERT', title, message, image, action)
     else:
         # when is not executed in app
         print(">>>>>>>>>>>>")
@@ -61,9 +61,10 @@ def launchIntent(action, data="", package=""):
         print(package)
         print(">>>>>>>>>>>>")
 
-def phoneActionsList(title,actions=[]):
+
+def phoneActionsList(title, actions=[]):
     if(hasBridge):
-        _bridge.message('SHOW_PHONE_ACTIONS_LIST', title,actions)
+        _bridge.message('SHOW_PHONE_ACTIONS_LIST', title, actions)
     else:
         # when is not executed in app
         print(">>>>>>>>>>>>")
@@ -72,9 +73,10 @@ def phoneActionsList(title,actions=[]):
         print(actions)
         print(">>>>>>>>>>>>")
 
-def watchActionsList(title,actions=[]):
+
+def watchActionsList(title, actions=[]):
     if(hasBridge):
-        _bridge.message('SHOW_WATCH_ACTIONS_LIST', title,actions)
+        _bridge.message('SHOW_WATCH_ACTIONS_LIST', title, actions)
     else:
         # when is not executed in app
         print(">>>>>>>>>>>>")
@@ -82,6 +84,29 @@ def watchActionsList(title,actions=[]):
         print(title)
         print(actions)
         print(">>>>>>>>>>>>")
+
+
+def setPhoneLoading(isLoading):
+    if(hasBridge):
+        _bridge.message('PHONE_LOADING', isLoading)
+    else:
+        # when is not executed in app
+        print(">>>>>>>>>>>>")
+        print('PHONE_LOADING')
+        print(isLoading)
+        print(">>>>>>>>>>>>")
+
+
+def setWatchLoading(isLoading):
+    if(hasBridge):
+        _bridge.message('WATCH_LOADING', isLoading)
+    else:
+        # when is not executed in app
+        print(">>>>>>>>>>>>")
+        print('WATCH_LOADING')
+        print(isLoading)
+        print(">>>>>>>>>>>>")
+
 
 def buildAction(actionName, functionName, functionParams=[]):
     ctx_id = ""
@@ -93,6 +118,7 @@ def buildAction(actionName, functionName, functionParams=[]):
         "function": functionName,
         "args": functionParams
     }
+
 
 def setCallback(functionName, params=[]):
     if(hasBridge):

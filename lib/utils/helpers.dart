@@ -1,11 +1,13 @@
+import 'package:flutter_store/flutter_store.dart';
 import 'package:mimicker/models/bridge_action.dart';
 import 'package:starflut/starflut.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mimicker/utils/bridge_actions.dart';
 import 'package:mimicker/main.dart';
+import 'package:mimicker/stores/main_store.dart';
 
-class Helpers {
+class Helpers { 
   static showAlert(BuildContext ctx, String title, String message,
       String imgUrl, BridgeAction action) {
     showDialog(
