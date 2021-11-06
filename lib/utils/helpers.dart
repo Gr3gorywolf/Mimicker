@@ -1,6 +1,5 @@
 import 'package:flutter_store/flutter_store.dart';
 import 'package:mimicker/models/bridge_action.dart';
-import 'package:starflut/starflut.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mimicker/utils/bridge_actions.dart';
@@ -49,7 +48,7 @@ class Helpers {
             ),
             (action != null)
                 ? TextButton(
-                    child: Text(action.name),
+                    child: Text(action.title),
                     onPressed: () {
                       BridgeActions.call(action);
                       Navigator.of(context).pop();

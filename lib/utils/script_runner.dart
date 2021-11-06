@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:android_intent/android_intent.dart';
+import 'package:flutter_js/flutter_js.dart';
 import 'package:flutter_store/flutter_store.dart';
 import 'package:mimicker/stores/stores_manager.dart';
 import "package:system_info/system_info.dart";
@@ -7,128 +8,84 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mimicker/main.dart';
+import 'package:flutter_js/javascript_runtime.dart';
 import 'package:mimicker/ui/debug_page/debug_page.dart';
 import 'package:mimicker/utils/watch_actions.dart';
-import 'package:starflut/starflut.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mimicker/models/bridge_action.dart';
 import 'helpers.dart';
 import 'package:mimicker/ui/phone_app/phone_action_list.dart';
 
 class ScriptRunner {
-  StarCoreFactory core;
-  StarServiceClass service;
-  StarSrvGroupClass serviceGroup;
-  String helperScript = "";
-  String procArch = "";
-  List<StarObjectClass> instances = [];
   bool intialized = false;
-  init() async {
-    if (this.intialized) return;
-    //var kernel = SysInfo.kernelBitness.abs().toString();
-    var kernelArch = SysInfo.kernelArchitecture.toString();
-    procArch = kernelArch.contains("64") ? "arm64-v8a" : "armeabi-v7a";
-    bool isAndroid = await Starflut.isAndroid();
-    core = await Starflut.getFactory();
-    service = await this.core.initSimple("test", "123", 0, 0, []);
-    if (isAndroid == true) {
-      await Starflut.copyFileFromAssets(
-          "python3.6.zip", "flutter_assets/starfiles", null);
-      await Starflut.copyFileFromAssets(
-          "mimicker.py", "flutter_assets/starfiles", null);
-      await Starflut.copyFileFromAssets(
-          "py-libs.zip", "flutter_assets/starfiles", null);
-      await Starflut.copyFileFromAssets(
-          "cacert.pem", "flutter_assets/starfiles", null);
-      var libsFile = await rootBundle.loadString("starfiles/libraries.json");
-      var libs = jsonDecode(libsFile)['libs'];
-      for (var lib in libs) {
-        var filePath = "$lib";
-        await Starflut.copyFileFromAssets(
-            filePath, "flutter_assets/starfiles/py-modules/$procArch", null);
-      }
-      await Starflut.loadLibrary("libpython3.6m.so");
-    }
-    serviceGroup = await service["_ServiceGroup"];
-    await serviceGroup.initRaw("python36", service);
-    this.intialized = true;
-  }
-
+  Map<String, JavascriptRuntime> instances = {};
+  init() async {}
   run(String script) async {
-    StarObjectClass python =
-        await service.importRawContext("python", "", false, "");
-    StarObjectClass bridge = await service.newObject([]);
-    await python.setValue("_bridge", bridge);
-    await python.setValue("_context_id", python.starId);
-    await bridge.regScriptProcP("message", (cleObject, paras) {
-      var type = paras[0];
-      var args = paras.sublist(1);
-      try {
-        handleMessage(type, args, python);
-      } catch (ex) {
-        print(ex);
-        Navigator.of(bldCtx).push(MaterialPageRoute(
-            builder: (ctx) =>
-                DebugPage("Error trying to handle the bridge message")));
-      }
-    });
-    var res = await service.runScript("python", script, "", "");
-    bool isValid = res[0];
-    String exception = res[1];
-    instances.add(python);
-    if (!isValid) {
-      Navigator.of(bldCtx)
-          .push(MaterialPageRoute(builder: (ctx) => DebugPage(exception)));
+    try {
+      var flutterJs = getJavascriptRuntime();
+      flutterJs.onMessage('js', (dynamic args) {
+        handleMessage(args['action'], args['data'], flutterJs);
+      });
+      flutterJs.onMessage('', (args) {});
+      script = await _compile(script, flutterJs);
+      JsEvalResult jsResult = flutterJs.evaluate(script);
+      instances[flutterJs.getEngineInstanceId()] = flutterJs;
+    } on PlatformException catch (e) {
+      print(e.details);
     }
   }
 
-  handleMessage(String type, List<dynamic> args, StarObjectClass instance) {
+  _compile(String script, JavascriptRuntime runtime) async {
+    String mimicker = await rootBundle.loadString("assets/js/mimicker.js");
+    script = script.replaceAll("""require("mimicker.js");""", mimicker);
+    runtime
+        .evaluate("const instanceId = '" + runtime.getEngineInstanceId() + "'");
+    return script;
+  }
+
+  handleMessage(String type, dynamic data, JavascriptRuntime instance) {
     switch (type) {
       case 'PHONE_ALERT':
         BridgeAction action = null;
-        if (args[3] != null) {
-          action = BridgeAction.fromDynamic(args[3]);
+        if (data['action'] != null) {
+          action = BridgeAction.fromDynamic(data['action']);
         }
-        Helpers.showAlert(bldCtx, args[0], args[1],args[2], action);
+        Helpers.showAlert(
+            bldCtx, data['title'], data['message'], data['image'], action);
         break;
       case 'WATCH_ALERT':
         BridgeAction action = null;
-        if (args[3] != null) {
-          action = BridgeAction.fromDynamic(args[3]);
+        if (data['action'] != null) {
+          action = BridgeAction.fromDynamic(data['action']);
         }
-        WatchActions.showWatchAlert(args[0], args[1],args[2], action);
-        break;
-      case 'CALL_FUNC':
-        instance.call(args[0], args[1]);
+        WatchActions.showWatchAlert(data['title'], data['message'], data['image'], action);
         break;
       case 'SHOW_PHONE_ACTIONS_LIST':
         List<BridgeAction> actions = [];
-        print(args[1]);
-        for (var act in args[1]) {
+        for (var act in data['actions']) {
           actions.add(BridgeAction.fromDynamic(act));
         }
-        PhoneActionList.show(bldCtx, args[0], actions);
+        PhoneActionList.show(bldCtx, data['title'], actions);
         break;
       case 'SHOW_WATCH_ACTIONS_LIST':
-        List<BridgeAction> actions = [];
-        print(args[1]);
-        for (var act in args[1]) {
+        List<BridgeAction> actions = []; 
+        for (var act in data['actions']) {
           actions.add(BridgeAction.fromDynamic(act));
         }
-        WatchActions.showActionsList(args[0], actions);
+        WatchActions.showActionsList(data['title'], actions);
         break;
       case 'LAUNCH_URL':
-        launch(args[0]);
+        launch(data['url']);
         break;
       case 'PHONE_LOADING':
-        StoresManager.useMainStore(bldCtx).setLoading(args[0]);
+        StoresManager.useMainStore(bldCtx).setLoading(data['isLoading']);
         break;
       case 'WATCH_LOADING':
-        WatchActions.setLoading(args[0]);
+        WatchActions.setLoading(data['isLoading']);
         break;
       case 'LAUNCH_INTENT':
         AndroidIntent intent =
-            AndroidIntent(action: args[0], data: args[1], package: args[2],
+            AndroidIntent(action: data['action'], data: data['data'], package: data['package'],
                 //clear top flag
                 flags: [268435456]);
         intent.launch();

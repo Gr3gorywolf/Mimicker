@@ -22,7 +22,7 @@ class PhoneActionList extends StatelessWidget {
           child: new Wrap(
             children: actions
                 .map((action) => ListTile(
-                    title: new Text(action.name),
+                    title: new Text(action.title),
                     onTap: () {
                       BridgeActions.call(action);
                       Navigator.of(context).pop();

@@ -6,9 +6,9 @@ import 'package:mimicker/main.dart';
  */
 class BridgeActions {
   static call(BridgeAction action) {
-    runner.instances
-        .where((element) => element.starId == action.context)
-        .first
-        .call(action.function, action.args);
+    var inst = runner.instances[action.instanceId];
+    var res =
+        inst.evaluate("var __callback=" + action.action + ";__callback()");
+    inst.evaluate("delete __callback");
   }
 }
