@@ -1,0 +1,5 @@
+name: mimicker_core
+version: 0.0.1
+description: mimicker's business logic core
+environment:
+  sdk: ">=2.7.0 <3.0.0"
