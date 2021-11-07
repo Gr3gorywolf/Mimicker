@@ -30,6 +30,13 @@ class ScriptRunner {
       script = await _compile(script, flutterJs);
       JsEvalResult jsResult = flutterJs.evaluate(script);
       instances[flutterJs.getEngineInstanceId()] = flutterJs;
+      if (jsResult.isError) {
+        Navigator.push( 
+            bldCtx,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    DebugPage(jsResult.stringResult)));
+      }
     } on PlatformException catch (e) {
       print(e.details);
     }
@@ -39,7 +46,7 @@ class ScriptRunner {
     String mimicker = await rootBundle.loadString("assets/js/mimicker.js");
     script = script.replaceAll("""require("mimicker.js");""", mimicker);
     runtime
-        .evaluate("const instanceId = '" + runtime.getEngineInstanceId() + "'");
+        .evaluate("""const instanceId = '${runtime.getEngineInstanceId()}'""");
     return script;
   }
 
@@ -58,7 +65,8 @@ class ScriptRunner {
         if (data['action'] != null) {
           action = BridgeAction.fromDynamic(data['action']);
         }
-        WatchActions.showWatchAlert(data['title'], data['message'], data['image'], action);
+        WatchActions.showWatchAlert(
+            data['title'], data['message'], data['image'], action);
         break;
       case 'SHOW_PHONE_ACTIONS_LIST':
         List<BridgeAction> actions = [];
@@ -68,7 +76,7 @@ class ScriptRunner {
         PhoneActionList.show(bldCtx, data['title'], actions);
         break;
       case 'SHOW_WATCH_ACTIONS_LIST':
-        List<BridgeAction> actions = []; 
+        List<BridgeAction> actions = [];
         for (var act in data['actions']) {
           actions.add(BridgeAction.fromDynamic(act));
         }
@@ -84,10 +92,12 @@ class ScriptRunner {
         WatchActions.setLoading(data['isLoading']);
         break;
       case 'LAUNCH_INTENT':
-        AndroidIntent intent =
-            AndroidIntent(action: data['action'], data: data['data'], package: data['package'],
-                //clear top flag
-                flags: [268435456]);
+        AndroidIntent intent = AndroidIntent(
+            action: data['action'],
+            data: data['data'],
+            package: data['package'],
+            //clear top flag
+            flags: [268435456]);
         intent.launch();
         break;
     }

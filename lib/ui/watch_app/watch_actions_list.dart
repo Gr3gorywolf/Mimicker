@@ -39,7 +39,7 @@ class WatchActionsList extends StatelessWidget {
                     child: RaisedButton(
                       color: Colors.blue,
                       textColor: Colors.white,
-                      child: Text(action.action),
+                      child: Text(action.title),
                       onPressed: () {
                         PhoneActions.executeBridgeAction(action);
                         //Navigator.of(context).pop();
