@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:mimicker/stores/stores_manager.dart';
+import 'package:mimicker/ui/render_page/render_page.dart';
 import 'package:mimicker/utils/bridge_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:mimicker/repository/scripts_repository.dart';
@@ -75,6 +76,19 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  handleRunScript(Scripts script) {
+    if (Helpers.scriptHasRender(script.content)) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => RenderPage(
+                    script: script.content,
+                  )));
+    } else {
+      runner.run(script.content);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bldCtx = context;
@@ -93,15 +107,13 @@ class _HomePageState extends State<HomePage> {
                   return false;
                 },
                 child: LoadingOverlay(
-                  isLoading:  _mainStore.isLoading,
+                  isLoading: _mainStore.isLoading,
                   child: ListView.builder(
                       itemCount: _scripts.length,
                       itemBuilder: (BuildContext context, int index) {
                         var script = _scripts[index];
                         return ListTile(
-                          onTap: () {
-                            runner.run(script.content);
-                          },
+                          onTap: ()=> handleRunScript(script),
                           leading: Icon(Icons.code),
                           title: Text(script.file),
                         );

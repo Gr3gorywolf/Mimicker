@@ -7,6 +7,9 @@ import 'package:mimicker/stores/main_store.dart';
 import 'package:mimicker_core/models/bridge_action.dart';
 
 class Helpers { 
+  static scriptHasRender(String script){
+    return script.contains('render(');
+  }
   static showAlert(BuildContext ctx, String title, String message,
       String imgUrl, BridgeAction action) {
     showDialog(

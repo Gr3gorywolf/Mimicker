@@ -2,7 +2,7 @@ import 'package:mimicker/main.dart';
 import 'package:mimicker_core/models/bridge_action.dart';
 
 /**
- * Actions that can be executed on phone from python runner
+ * Actions that can be executed on phone from js runner
  */
 class BridgeActions {
   static call(BridgeAction action) {

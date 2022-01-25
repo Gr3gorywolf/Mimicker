@@ -16,6 +16,14 @@ function buildAction(title, callback) {
         instanceId
     }
 }
+/**
+ * 
+ * @param {object} toRender 
+ * @returns 
+ */
+function render(toRender){
+    return  sendAction('RENDER',toRender);
+}
 
 const phone = {
     /**

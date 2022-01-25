@@ -19,8 +19,10 @@ import 'package:mimicker/ui/action_list/action_list.dart';
 class ScriptRunner {
   bool intialized = false;
   Map<String, JavascriptRuntime> instances = {};
+  Function(dynamic) renderCallback = null;
   init() async {}
-  run(String script) async {
+  run(String script, {Function(dynamic) renderCallback = null}) async {
+    this.renderCallback = renderCallback;
     try {
       var flutterJs = getJavascriptRuntime();
       flutterJs.onMessage('js', (dynamic args) {
@@ -31,7 +33,7 @@ class ScriptRunner {
       JsEvalResult jsResult = flutterJs.evaluate(script);
       instances[flutterJs.getEngineInstanceId()] = flutterJs;
       if (jsResult.isError) {
-        Navigator.push( 
+        Navigator.push(
             bldCtx,
             MaterialPageRoute(
                 builder: (BuildContext context) =>
@@ -81,6 +83,11 @@ class ScriptRunner {
           actions.add(BridgeAction.fromDynamic(act));
         }
         Runnables.showActionsList(data['title'], actions);
+        break;
+      case 'RENDER':
+        if (renderCallback != null) {
+          renderCallback(data);
+        }
         break;
       case 'LAUNCH_URL':
         launch(data['url']);
