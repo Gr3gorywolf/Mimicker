@@ -21,8 +21,23 @@ function buildAction(title, callback) {
  * @param {object} toRender 
  * @returns 
  */
-function render(toRender){
-    return  sendAction('RENDER',toRender);
+function render(toRender) {
+    return sendAction('RENDER', toRender);
+}
+
+/**
+ * 
+ * @param {function(any)} callback 
+ */
+function buildRenderCallback(callback, id = null) {
+    callback = callback + '';
+    var val = JSON.stringify({
+        instanceId,
+        callback,
+        id
+    });
+    var script = "${runCallback(" + val + ")}";
+    return script;
 }
 
 const phone = {

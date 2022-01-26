@@ -29,10 +29,10 @@ dependencies:
   flutter_google_message_api: ^0.0.2
   http: ^0.13.4
   carousel_slider: ^4.0.0
-  permission_handler: ^5.0.1+1
+  permission_handler: 7.0.0
   android_intent: ^2.0.2
   loading_overlay: ^0.3.0
-  json_dynamic_widget: ^2.1.0
+  json_dynamic_widget: 4.0.0
   mimicker_core:
     path: ../mimicker_core
   flutter_store:

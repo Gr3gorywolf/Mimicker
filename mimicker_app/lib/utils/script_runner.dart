@@ -39,16 +39,27 @@ class ScriptRunner {
                 builder: (BuildContext context) =>
                     DebugPage(jsResult.stringResult)));
       }
+      return flutterJs.getEngineInstanceId();
     } on PlatformException catch (e) {
       print(e.details);
+      return "";
     }
+  }
+
+  setRenderValues(instanceId, data) {
+    runner.instances[instanceId]?.evaluate(
+        """renderValues = JSON.parse('${jsonEncode(data)}')""");
   }
 
   _compile(String script, JavascriptRuntime runtime) async {
     String mimicker = await rootBundle.loadString("assets/js/mimicker.js");
     script = script.replaceAll("""require("mimicker.js");""", mimicker);
     runtime
-        .evaluate("""const instanceId = '${runtime.getEngineInstanceId()}'""");
+        .evaluate("""
+        let renderValues= {}
+        let instanceId = '${runtime.getEngineInstanceId()}'
+        
+        """);
     return script;
   }
 
