@@ -14,7 +14,7 @@ import 'package:mimicker_core/models/scripts_response.dart';
 import '../../main.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key? key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final String? title;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
     final _mainStore = StoresManager.useMainStore(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text(widget.title ?? ''),
         ),
         body: (_loading
             ? Center(
@@ -104,7 +104,6 @@ class _HomePageState extends State<HomePage> {
             : RefreshIndicator(
                 onRefresh: () async {
                   await fetchScripts();
-                  return false;
                 },
                 child: LoadingOverlay(
                   isLoading: _mainStore.isLoading,
@@ -113,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (BuildContext context, int index) {
                         var script = _scripts[index];
                         return ListTile(
-                          onTap: ()=> handleRunScript(script),
+                          onTap: () => handleRunScript(script),
                           leading: Icon(Icons.code),
                           title: Text(script.file),
                         );

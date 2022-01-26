@@ -5,7 +5,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ImageRepository {
   Future<String> getImageBase64(String url, {int scaleSize = -1}) async {
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url));
     var imgBytes = response.bodyBytes;
     if (scaleSize > -1) {
       print("bf ->" + imgBytes.length.toString());

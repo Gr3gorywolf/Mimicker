@@ -8,7 +8,7 @@ class BridgeActions {
   static call(BridgeAction action) {
     var inst = runner.instances[action.instanceId];
     var res =
-        inst.evaluate("var __callback=" + action.action + ";__callback()");
-    inst.evaluate("delete __callback");
+        inst?.evaluate("var __callback=" + action.action + ";__callback()");
+    inst?.evaluate("delete __callback");
   }
 }

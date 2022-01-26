@@ -8,7 +8,7 @@ import 'package:mimicker/utils/script_runner.dart';
 import 'package:mimicker/stores/main_store.dart';
 
 ScriptRunner runner = new ScriptRunner();
-BuildContext bldCtx;
+late BuildContext bldCtx;
 FlutterGoogleMessageApi msgApi = FlutterGoogleMessageApi();
 bool isScriptLoading = false;
 

@@ -19,9 +19,9 @@ import 'package:mimicker/ui/action_list/action_list.dart';
 class ScriptRunner {
   bool intialized = false;
   Map<String, JavascriptRuntime> instances = {};
-  Function(dynamic) renderCallback = null;
+  Function(dynamic)? renderCallback = null;
   init() async {}
-  run(String script, {Function(dynamic) renderCallback = null}) async {
+  run(String script, {Function(dynamic)? renderCallback = null}) async {
     this.renderCallback = renderCallback;
     try {
       var flutterJs = getJavascriptRuntime();
@@ -55,7 +55,7 @@ class ScriptRunner {
   handleMessage(String type, dynamic data, JavascriptRuntime instance) {
     switch (type) {
       case 'PHONE_ALERT':
-        BridgeAction action = null;
+        BridgeAction? action = null;
         if (data['action'] != null) {
           action = BridgeAction.fromDynamic(data['action']);
         }
@@ -63,7 +63,7 @@ class ScriptRunner {
             bldCtx, data['title'], data['message'], data['image'], action);
         break;
       case 'WATCH_ALERT':
-        BridgeAction action = null;
+        BridgeAction? action = null;
         if (data['action'] != null) {
           action = BridgeAction.fromDynamic(data['action']);
         }
@@ -86,7 +86,7 @@ class ScriptRunner {
         break;
       case 'RENDER':
         if (renderCallback != null) {
-          renderCallback(data);
+          renderCallback!(data);
         }
         break;
       case 'LAUNCH_URL':

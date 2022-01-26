@@ -13,7 +13,7 @@ import '../main.dart';
  */
 class Runnables {
   static showWatchAlert(
-      String title, String message, String image, BridgeAction action) async {
+      String title, String message, String image, BridgeAction? action) async {
     var parsedAction = null;
     var imgData = null;
     if (image != null) {

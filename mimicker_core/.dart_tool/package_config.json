@@ -1,0 +1,14 @@
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "mimicker_core",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "2.7"
+    }
+  ],
+  "generated": "2022-01-25T23:48:05.186385Z",
+  "generator": "pub",
+  "generatorVersion": "2.15.1"
+}

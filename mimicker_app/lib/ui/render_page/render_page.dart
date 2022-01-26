@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:mimicker/main.dart';
 
 class RenderPage extends StatefulWidget {
-  final String script;
-  const RenderPage({Key key, this.script}) : super(key: key);
+  final String? script;
+  const RenderPage({Key? key, this.script}) : super(key: key);
 
   @override
   _RenderPageState createState() => _RenderPageState();
 }
 
 class _RenderPageState extends State<RenderPage> {
-  JsonWidgetData jsonWidget = null;
+  JsonWidgetData? jsonWidget = null;
   void handleRender(dynamic toRender) {
     print(toRender);
     setState(() {
@@ -19,19 +19,19 @@ class _RenderPageState extends State<RenderPage> {
     });
   }
 
-  Widget buildBody() {
+  Widget? buildBody() {
     if (jsonWidget == null) {
       return Center(
         child: Text("Please render something"),
       );
     }
-    return jsonWidget.build(context: context);
+    return jsonWidget?.build(context: context);
   }
 
   @override
   void initState() {
     super.initState();
-    runner.run(widget.script, renderCallback: handleRender);
+    runner.run(widget.script ?? '', renderCallback: handleRender);
   }
 
   @override
@@ -40,7 +40,7 @@ class _RenderPageState extends State<RenderPage> {
       appBar: AppBar(
         title: Text("Renderer"),
       ),
-      body:buildBody(),
+      body: buildBody(),
     );
-  } 
+  }
 }

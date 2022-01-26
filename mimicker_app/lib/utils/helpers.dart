@@ -11,7 +11,7 @@ class Helpers {
     return script.contains('render(');
   }
   static showAlert(BuildContext ctx, String title, String message,
-      String imgUrl, BridgeAction action) {
+      String? imgUrl, BridgeAction? action) {
     showDialog(
       context: ctx,
       builder: (BuildContext context) {
@@ -57,7 +57,7 @@ class Helpers {
                       Navigator.of(context).pop();
                     },
                   )
-                : null
+                : Container()
           ],
         );
       },
