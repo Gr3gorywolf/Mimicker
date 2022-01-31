@@ -20,9 +20,13 @@ class ScriptRunner {
   bool intialized = false;
   Map<String, JavascriptRuntime> instances = {};
   Function(dynamic)? renderCallback = null;
+  Function(dynamic)? renderStateCallback = null;
   init() async {}
-  run(String script, {Function(dynamic)? renderCallback = null}) async {
+  run(String script,
+      {Function(dynamic)? renderCallback = null,
+      Function(dynamic)? renderStateCallback = null}) async {
     this.renderCallback = renderCallback;
+    this.renderStateCallback = renderStateCallback;
     try {
       var flutterJs = getJavascriptRuntime();
       flutterJs.onMessage('js', (dynamic args) {
@@ -47,16 +51,17 @@ class ScriptRunner {
   }
 
   setRenderValues(instanceId, data) {
+    print(data);
     runner.instances[instanceId]
-        ?.evaluate("""renderValues = JSON.parse('${jsonEncode(data)}')""");
+        ?.evaluate("""renderState = JSON.parse('${jsonEncode(data)}')""");
   }
 
   _compile(String script, JavascriptRuntime runtime) async {
     String mimicker = await rootBundle.loadString("assets/js/mimicker.js");
     script = script.replaceAll("""require("mimicker.js");""", mimicker);
     runtime.evaluate("""
-        let renderValues= {}
         let instanceId = '${runtime.getEngineInstanceId()}'
+        let renderState = {}
         """);
     return script;
   }
@@ -96,6 +101,11 @@ class ScriptRunner {
       case 'RENDER':
         if (renderCallback != null) {
           renderCallback!(data);
+        }
+        break;
+      case 'RENDER_SET_STATE':
+        if (renderCallback != null) {
+          renderStateCallback!(data);
         }
         break;
       case 'LAUNCH_URL':

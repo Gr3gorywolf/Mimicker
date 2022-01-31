@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:json_dynamic_widget/json_dynamic_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:mimicker/main.dart';
+import 'package:mimicker/repository/scripts_repository.dart';
 import 'package:mimicker/utils/bridge_actions.dart';
 import 'package:mimicker_core/models/bridge_action.dart';
 
@@ -21,6 +22,10 @@ class _RenderPageState extends State<RenderPage> {
     setState(() {
       jsonWidget = JsonWidgetData.fromDynamic(toRender);
     });
+  }
+
+  void handleRenderState(dynamic state) {
+    state.forEach((k, v) => JsonWidgetRegistry.instance.setValue(k, v));
   }
 
   Widget? buildBody() {
@@ -42,8 +47,9 @@ class _RenderPageState extends State<RenderPage> {
 
   void _init() async {
     var registry = JsonWidgetRegistry.instance;
-    this.jsInstanceId =
-        await runner.run(widget.script ?? '', renderCallback: handleRender);
+    registry.clearValues();
+    this.jsInstanceId = await runner.run(widget.script ?? '',
+        renderCallback: handleRender, renderStateCallback: handleRenderState);
     registry.registerFunctions({
       'runCallback': ({args, required registry}) => () {
             runCallback(args);
