@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:json_dynamic_widget/json_dynamic_widget.dart';
@@ -19,6 +20,7 @@ class _RenderPageState extends State<RenderPage> {
   JsonWidgetData? jsonWidget = null;
   String jsInstanceId = "";
   void handleRender(dynamic toRender) {
+    print(toRender);
     setState(() {
       jsonWidget = JsonWidgetData.fromDynamic(toRender);
     });
@@ -59,6 +61,7 @@ class _RenderPageState extends State<RenderPage> {
       runner.setRenderValues(this.jsInstanceId, registry.values);
       return true;
     });
+    runner.instances[this.jsInstanceId]?.executePendingJob();
   }
 
   @override

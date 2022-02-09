@@ -96,7 +96,7 @@ var renderer = {
      */
     foreachBinding(iterableStateName, child) {
         const templateName = `_${iterableStateName}_template`;
-        renderer.setState(templateName, child);
+        renderer.setState({...renderState,  [templateName]: child});
         return "${for_each(" + iterableStateName + ", '" + templateName + "')}"
     },
 }

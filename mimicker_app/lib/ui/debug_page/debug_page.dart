@@ -11,7 +11,13 @@ class DebugPage extends StatelessWidget {
         title: Text("Script execution error"),
       ),
       backgroundColor: Colors.black,
-      body: Center(child: Text(exceptionMsg,style: TextStyle(color: Colors.orange),),),
+      body: SingleChildScrollView(
+          child: Center(
+        child: Text(
+          exceptionMsg,
+          style: TextStyle(color: Colors.orange),
+        ),
+      )),
     );
   }
 }

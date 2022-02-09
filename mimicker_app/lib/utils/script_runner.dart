@@ -32,7 +32,6 @@ class ScriptRunner {
       flutterJs.onMessage('js', (dynamic args) {
         handleMessage(args['action'], args['data'], flutterJs);
       });
-      flutterJs.onMessage('', (args) {});
       script = await _compile(script, flutterJs);
       JsEvalResult jsResult = flutterJs.evaluate(script);
       instances[flutterJs.getEngineInstanceId()] = flutterJs;
@@ -42,7 +41,7 @@ class ScriptRunner {
             MaterialPageRoute(
                 builder: (BuildContext context) =>
                     DebugPage(jsResult.stringResult)));
-      }
+      } 
       return flutterJs.getEngineInstanceId();
     } on PlatformException catch (e) {
       print(e.details);
